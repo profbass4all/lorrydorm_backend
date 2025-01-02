@@ -1,4 +1,4 @@
-import { validateUser }  from '../validations/users.validation.mjs'
+import { validateUser }  from '../validations/index.mjs'
 import messages from '../messages/index.mjs';
 import { hashPassword, comparePassword } from '../utils/index.mjs';
 import User from '../models/users.mjs';
@@ -68,7 +68,7 @@ export const login = async (req, res) => {
 
         const token = jwt.sign({email: findIfEmailExists.email}, process.env.JWT_SECRET, {expiresIn: '1h'})
 
-        res.setHeader('access-token', token)
+        res.header('authorization', `Bearer ${token}`)
 
         res.status(200).json({
             message: messages.LOGGEDIN,

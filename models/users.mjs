@@ -1,5 +1,8 @@
-import { Sequelize, DataTypes, Model } from 'sequelize'
+import { Sequelize, DataTypes, Model, UUID } from 'sequelize'
 import {sequelize} from '../config/index.mjs'
+import Review from './reviews.mjs';
+import Transaction from './transaction.mjs';
+import Lorry from './lorries.mjs';
 
 export default class User extends Model {}
 
@@ -8,23 +11,17 @@ User.init(
     sn:{
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        unique: true,
+        primaryKey: true,
     },
     first_name: {
         type: DataTypes.STRING,
         allowNull: false,
-
     },
     last_name: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    merchant_id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-        unique: true
-    },
+    
     email: {
         type: DataTypes.STRING,
         unique: true,
@@ -45,5 +42,51 @@ User.init(
     },
 );
 
-// the defined model is the class itself
-console.log(User === sequelize.models.User); // true
+
+User.hasMany(Review, {
+    foreignKey: {
+        allowNull: false, //
+        name: 'user_id',
+        type: DataTypes.INTEGER,
+    }
+})
+
+Review.belongsTo(User, {
+    foreignKey: {
+        allowNull: false,
+        name: 'user_id',
+        type: DataTypes.INTEGER,
+    }
+})
+
+User.hasMany(Transaction, {
+    foreignKey: {
+        allowNull: false,
+        name: 'user_id',
+        type: DataTypes.INTEGER,
+    }
+})
+
+Transaction.belongsTo(User, {
+    foreignKey: {
+        allowNull: false,
+        name: 'user_id',
+        type: DataTypes.INTEGER,
+    }
+})
+
+User.hasMany(Lorry, {
+    foreignKey: {
+        allowNull: false,
+        name: 'user_id',
+        type: DataTypes.INTEGER,
+    }
+})
+
+Lorry.belongsTo(User, {
+    foreignKey: {
+        allowNull: false,
+        name: 'user_id',
+        type: DataTypes.INTEGER,
+    }
+})
