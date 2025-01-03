@@ -69,15 +69,21 @@ export async function getLorryById(req, res) {
         
         if(!user) throw new Error(messages.USER_NOT_FOUND)
 
-        const lorry = await user.getLorries({ where: { sn: id } })
+        // const lorry = await user.getLorries({ where: { sn: id } })
+
+        const lorry = await Lorry.findOne({where:{
+            sn: id,
+            user_id: user.sn
+        }})
 
         if(lorry.length < 1) throw new Error(messages.NO_LORRY_FOUND)
 
         res.status(200).json({
             message: messages.LORRY_FETCHED,
             status: true,
-            data: lorry[0]
+            data: lorry
         })
+
     } catch (error) {
         res.status(500).json({
             message: error.message,
