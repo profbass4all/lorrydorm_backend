@@ -64,16 +64,11 @@ export async function getLorryById(req, res) {
     try {
 
         const { id } = req.params
-
-        const user = req.user
         
-        if(!user) throw new Error(messages.USER_NOT_FOUND)
-
         // const lorry = await user.getLorries({ where: { sn: id } })
 
         const lorry = await Lorry.findOne({where:{
             sn: id,
-            user_id: user.sn
         }})
 
         if(lorry.length < 1) throw new Error(messages.NO_LORRY_FOUND)
