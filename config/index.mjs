@@ -10,8 +10,8 @@ export const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER,
 //this function establish connection
 export default async function connection (){
     try {
+            await sequelize.sync()
             await sequelize.authenticate();
-            // User.sync();
             console.log('Connection has been established successfully.');
         } catch (error) {
             console.error('Unable to connect to the database:', error);
