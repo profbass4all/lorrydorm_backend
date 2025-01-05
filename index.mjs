@@ -2,6 +2,8 @@ import dotenv from 'dotenv'
 dotenv.config()
 import express  from 'express'
 const app = express()
+const port = process.env.APP_PORT || 1624
+
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', 'http://localhost:5173'); // Allow your frontend's origin
@@ -11,7 +13,6 @@ app.use((req, res, next) => {
     next(); // Move to the next middleware or route handler
 });
 
-const port = process.env.APP_PORT || 1900
 import connection, { sequelize } from './config/index.mjs'
 import User from './models/users.mjs'
 import Review from './models/reviews.mjs'
