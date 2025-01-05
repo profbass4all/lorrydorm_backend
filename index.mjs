@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 import express  from 'express'
 const app = express()
-const port = process.env.APP_PORT || 1624
+const port = process.env.PORT || 1624
 
 
 app.use((req, res, next) => {
