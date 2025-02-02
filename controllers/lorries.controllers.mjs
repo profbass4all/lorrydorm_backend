@@ -9,13 +9,21 @@ export async function createLorry(req, res){
     try {
         const user = req.user
 
-        if(!user) throw new Error(messages.USER_NOT_FOUND)
-
-        const {name, price, description, imageUrl, type, quantity} = req.body
+        if(!user){
+            return res.status(401).json({
+                message: messages.USER_NOT_FOUND,
+                status: false,
+            })
+        }
 
         const {error} = validateLorry(req.body)
 
-        if(error != undefined) throw new Error(error.details[0].message)
+        if(error != undefined){
+            return res.status(400).json({
+                message: error.details[0].message,
+                status: false,
+            })
+        }
         
         const newLorry = await user.createLorry(req.body)
 
@@ -38,11 +46,21 @@ export async function getLorries(req, res) {
         
         const user = req.user
 
-        if(!user) throw new Error(messages.USER_NOT_FOUND)
+        if(!user){
+            return res.status(401).json({
+                message: messages.USER_NOT_FOUND,
+                status: false,
+            })
+        }
 
         const lorries = await user.getLorries()
 
-        if(!lorries) throw new Error(messages.NO_LORRIES_FOUND)
+        if(!lorries){
+            return res.status(404).json({
+                message: messages.NO_LORRIES_FOUND,
+                status: false,
+            })
+        }
 
         res.status(200).json({
             message: messages.LORRIES_FETCHED,
@@ -65,13 +83,16 @@ export async function getLorryById(req, res) {
 
         const { id } = req.params
         
-        // const lorry = await user.getLorries({ where: { sn: id } })
-
         const lorry = await Lorry.findOne({where:{
             sn: id,
         }})
 
-        if(lorry.length < 1) throw new Error(messages.NO_LORRY_FOUND)
+        if(!lorry){
+            return res.status(404).json({
+                message: messages.NO_LORRY_FOUND,
+                status: false,
+            })
+        }
 
         res.status(200).json({
             message: messages.LORRY_FETCHED,
@@ -92,7 +113,12 @@ export async function getAllLorries(req, res) {
     try {
         const allLorries = await Lorry.findAll()
 
-        if(allLorries.length < 1 ) throw new Error (messages.NO_LORRIES_FOUND)
+        if(allLorries.length < 1 ){
+            return res.status(404).json({
+                message: messages.NO_LORRIES_FOUND,
+                status: false,
+            })
+        }
 
         res.status(200).json({
             message: messages.LORRIES_FETCHED,

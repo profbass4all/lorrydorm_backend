@@ -5,13 +5,18 @@ import { sequelize } from '../config/index.mjs'
 
 export async function createTransaction(req, res){
     try {
-        const {amount, date, lorry_id} = req.body
 
         const user = req.user
 
         const {error} = validateTransaction(req.body)
 
-        if(error) throw new Error(error.details[0].message)
+        if(error !== undefined){
+            return res.status(400).json({
+                message: error.details[0].message,
+                status: false,
+                data: null,
+            })
+        }
 
         const transaction = await user.createTransaction(req.body)
 
@@ -38,16 +43,28 @@ export async function getTransactions(req, res){
     try {
         const user = req.user
 
-        if(!user) throw new Error(messages.LOGIN_REQUIRED)
+        if(!user){
+            return res.status(401).json({
+                message: messages.LOGIN_REQUIRED,
+                status: false,
+                data: null,
+            })
+        }
 
         const transactions = await user.getTransactions()
 
-        if(transactions.length < 1) throw new Error(messages.NO_TRANSACTIONS_FOUND)
+        if(transactions.length < 1){
+            return res.status(404).json({
+                message: messages.NO_TRANSACTIONS_FOUND,
+                status: false,
+                data: null,
+            })
+        }
 
         const transact = await sequelize.query(
             `SELECT MONTH(date) AS Month, 
             SUM(amount) AS Amount 
-            FROM transactions
+            FROM Transactions
             WHERE user_id = :userId
             GROUP BY
             MONTH(date)

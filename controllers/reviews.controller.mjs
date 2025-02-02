@@ -6,12 +6,17 @@ import { validateReview } from '../validations/index.mjs'
 export async function createReview(req, res){
     try {
 
-        const { first_name, rating, text, date } = req.body
         const user = req.user
         
         const { error } = validateReview(req.body)
 
-        if(error != undefined) throw new Error(error.details[0].message)
+        if(error != undefined){
+            return res.status(400).json({
+                message: error.details[0].message,
+                status: false,
+                data: null,
+            })
+        }
 
         const review = await user.createReview(req.body)
 
@@ -35,11 +40,23 @@ export async function getAllReviews(req, res){
         
         const user = req.user
 
-        if(!user) throw new Error (messages.LOGIN_REQUIRED)
+        if(!user){
+            return res.status(401).json({
+                message: messages.LOGIN_REQUIRED,
+                status: false,
+                data: null,
+            })
+        }
 
         const reviews = await user.getReviews({order:['date']})
 
-        if(reviews.length < 1) throw new Error (messages.NO_REVIEW_FOUND)
+        if(reviews.length < 1){
+            return res.status(404).json({
+                message: messages.NO_REVIEW_FOUND,
+                status: false,
+                data: null,
+            })
+        }
 
         res.status(200).json({
             message: messages.ALL_REVIEWS_FOUND,

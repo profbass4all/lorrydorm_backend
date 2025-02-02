@@ -15,7 +15,13 @@ export const createUser = async (req, res)=>{
 
         const {error} = validateUser(req.body)
 
-        if( error != undefined) throw new Error(error.details[0].message)
+        if( error != undefined){
+            return res.status(400).json({
+                message: error.details[0].message,
+                status: false,
+                data: null
+            })
+        }
         
         const [hash, salt] = await hashPassword(password)
 
@@ -23,7 +29,13 @@ export const createUser = async (req, res)=>{
             where: { email: email}
         })
 
-        if(findIfEmailExists) throw new Error(messages.EMAIL_EXISTS)
+        if(findIfEmailExists){
+            return res.status(409).json({
+                message: messages.EMAIL_EXISTS,
+                status: false,
+                data: null
+            })
+        }
 
         const user = await User.create({
             first_name,
@@ -60,11 +72,23 @@ export const login = async (req, res) => {
             {email: email}
         })
 
-        if(!findIfEmailExists) throw new Error(messages.INVALIDEMAILORPASSWORD)
+        if(!findIfEmailExists){
+            return res.status(401).json({
+                message: messages.INVALIDEMAILORPASSWORD,
+                status: false,
+                data: null
+            })
+        }
 
         const hash = await comparePassword(password, findIfEmailExists.password_salt)
 
-        if(hash != findIfEmailExists.password_hash) throw new Error(messages.INVALIDEMAILORPASSWORD)
+        if(hash != findIfEmailExists.password_hash){
+            return res.status(401).json({
+                message: messages.INVALIDEMAILORPASSWORD,
+                status: false,
+                data: null
+            })
+        }
 
         const token = jwt.sign({email: findIfEmailExists.email}, process.env.JWT_SECRET, {expiresIn: '1h'})
 
