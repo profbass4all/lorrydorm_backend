@@ -22,7 +22,7 @@ const app = express();
 const port = process.env.PORT || 1624;
 
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'https://lorrydorm01.netlify.app/'); // Allow your frontend's origin
+    res.header('Access-Control-Allow-Origin', 'https://lorrydorm01.netlify.app'); // Allow your frontend's origin
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Allowed HTTP methods
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Allow specific headers
     res.header('Access-Control-Expose-Headers', 'Authorization'); // Expose custom headers like Authorization to the frontend
@@ -30,7 +30,7 @@ app.use((req, res, next) => {
 });
 // Middleware
 app.use(cors({
-    origin: 'https://lorrydorm01.netlify.app/',
+    origin: 'https://lorrydorm01.netlify.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
