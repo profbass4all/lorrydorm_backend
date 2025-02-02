@@ -11,6 +11,8 @@ import UserRouter from './routes/users.routes.mjs';
 import ReviewRouter from './routes/review.routes.mjs';
 import LorryRouter from './routes/lorries.routes.mjs';
 import TransactionRouter from './routes/transaction.routes.mjs';
+import swaggerUI from 'swagger-ui-express'
+import fs from 'fs';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
@@ -61,12 +63,21 @@ app.use(ReviewRouter);
         console.error('Unable to connect to the database:', error);
     }
 })();
-console.log(process.env.DB_NAME, process.env.DB_USER)// Error handling middleware
+const data = fs.readFileSync('./apidocs.json', 'utf-8');
+const apidocs = JSON.parse(data);
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(apidocs));
+app.get('/', (req, res) => {
+    res.json({
+        message: 'Welcome to the Lorry Dorm API',
+        status: true,
+    });
+})
+
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ message: 'Internal Server Error' });
 });
-
 
 
 
